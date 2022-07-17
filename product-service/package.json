@@ -1,0 +1,47 @@
+{
+  "name": "product-service",
+  "version": "1.0.0",
+  "description": "Product Service created API Gateway and Lambdas",
+  "main": "handler.js",
+  "scripts": {
+    "sls": "serverless",
+    "package-build": "sls package",
+    "deploy:dev": "sls deploy -s dev",
+    "deploy:prod": "sls deploy -s prod",
+    "remove:dev-stack": "sls remove -s dev --region eu-west-1",
+    "remove:prod-stack": "sls remove -s prod --region eu-west-1",
+    "webpack": "sls webpack --out dist",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch --coverage",
+    "local:getAllProducts": "sls invoke local -f getAllProducts --path src/functions/getAllProducts/mock.json",
+    "local:getProductById": "sls invoke local -f getProductById --path src/functions/getProductById/mock.json"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.101",
+    "@types/jest": "^28.1.6",
+    "@types/node": "^10.17.56",
+    "@types/serverless": "^3.12.7",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.0.0",
+    "fork-ts-checker-webpack-plugin": "^7.2.12",
+    "jest": "^28.1.3",
+    "json-schema-to-ts": "^1.4.1",
+    "serverless": "^3.21.0",
+    "serverless-auto-swagger": "^2.8.2",
+    "serverless-offline": "^8.8.1",
+    "serverless-prune-plugin": "^2.0.1",
+    "serverless-stage-manager": "^1.0.5",
+    "serverless-webpack": "^5.7.1",
+    "ts-jest": "^28.0.7",
+    "ts-loader": "^9.3.1",
+    "ts-node": "^8.10.2",
+    "typescript": "^4.7.4",
+    "webpack": "^5.73.0",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "author": "JSCC",
+  "license": "MIT",
+  "dependencies": {
+    "winston": "^3.3.3"
+  }
+}

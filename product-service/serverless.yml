@@ -1,0 +1,74 @@
+service: product-service
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: eu-west-1
+  apiGateway:
+    minimumCompressionSize: 1024
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    ENV_STAGE: ${opt:stage, 'dev'}
+
+plugins:
+  - serverless-auto-swagger
+  - serverless-webpack
+  - serverless-offline
+  - serverless-stage-manager
+  - serverless-prune-plugin
+
+custom:
+  autoswagger:
+    title: "AWS Course EPAM - Online Shop"
+    typefiles: ["./src/models/products.ts"]
+    useStage: true
+    host: "lfh6re2wfg.execute-api.eu-west-1.amazonaws.com/dev"
+  webpack:
+    webpackConfig: "webpack.config.js"
+    includeModules: true
+    dotenvVars: ${file(configs.js)}
+  stages:
+    - dev
+    - staging
+    - prod
+  prune:
+    automatic: true
+    number: 1
+
+functions:
+  getProductById:
+    handler: handler.getProductById
+    events:
+      - http:
+          path: products/{productId}
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                productId: true
+          responses:
+            200:
+              description: "Get Product Success"
+              bodyType: "Product"
+            400:
+              description: "Product not found"
+            500:
+              description: "Internal Server Error"
+  getAllProducts:
+    handler: handler.getAllProducts
+    events:
+      - http:
+          path: products
+          method: get
+          cors: true
+          responses:
+            200:
+              description: "Get Products Success"
+              bodyType: "Products"
+            400:
+              description: "Products not found"
+            500:
+              description: "Internal Server Error"
