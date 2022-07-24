@@ -11,6 +11,11 @@ provider:
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     ENV_STAGE: ${opt:stage, 'dev'}
+    PGHOST: ${self:custom.dotenvVars.PGHOST, env:PGHOST, ''}
+    PGUSER: ${self:custom.dotenvVars.PGUSER, env:PGUSER, ''}
+    PGDATABASE: ${self:custom.dotenvVars.PGDATABASE, env:PGDATABASE, ''}
+    PGPASSWORD: ${self:custom.dotenvVars.PGPASSWORD, env:PGPASSWORD, ''}
+    PGPORT: ${self:custom.dotenvVars.PGPORT, env:PGPORT, ''}
 
 plugins:
   - serverless-auto-swagger
@@ -18,6 +23,7 @@ plugins:
   - serverless-offline
   - serverless-stage-manager
   - serverless-prune-plugin
+  - serverless-iam-roles-per-function
 
 custom:
   autoswagger:
@@ -52,7 +58,7 @@ functions:
           responses:
             200:
               description: "Get Product Success"
-              bodyType: "Product"
+              bodyType: "ProductWithCount"
             400:
               description: "Product not found"
             500:
@@ -67,8 +73,24 @@ functions:
           responses:
             200:
               description: "Get Products Success"
-              bodyType: "Products"
+              bodyType: "ProductsWithCount"
+            500:
+              description: "Internal Server Error"
+  createProduct:
+    handler: handler.createProduct
+    events:
+      - http:
+          path: products
+          method: post
+          cors: true
+          bodyType: "CreateProduct"
+          request:
+            schema:
+              application/json: ${file(src/functions/createProduct/createProductSchema.json)}
+          responses:
+            200:
+              description: "Product created"
             400:
-              description: "Products not found"
+              description: "Product could not be created"
             500:
               description: "Internal Server Error"

@@ -28,6 +28,7 @@
     "json-schema-to-ts": "^1.4.1",
     "serverless": "^3.21.0",
     "serverless-auto-swagger": "^2.8.2",
+    "serverless-iam-roles-per-function": "^3.2.0",
     "serverless-offline": "^8.8.1",
     "serverless-prune-plugin": "^2.0.1",
     "serverless-stage-manager": "^1.0.5",
@@ -42,6 +43,9 @@
   "author": "JSCC",
   "license": "MIT",
   "dependencies": {
+    "@types/pg": "^8.6.5",
+    "pg": "^8.7.3",
+    "uuid": "^8.3.2",
     "winston": "^3.3.3"
   }
 }

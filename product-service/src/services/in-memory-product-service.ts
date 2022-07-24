@@ -1,5 +1,6 @@
 import products from "../mocks/products-data.json";
 import { ProductServiceInterface } from "../models/product-service-interface";
+import { CreateProduct } from "../models/products";
 
 class InMemoryProductService implements ProductServiceInterface {
   getProductById(id: string) {
@@ -8,6 +9,10 @@ class InMemoryProductService implements ProductServiceInterface {
 
   getAllProducts() {
     return Promise.resolve(products);
+  }
+
+  create(product: CreateProduct) {
+    return Promise.resolve(product as any);
   }
 }
 

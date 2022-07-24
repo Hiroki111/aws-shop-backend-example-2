@@ -5,12 +5,9 @@ import { ProductServiceInterface } from "../../models/product-service-interface"
 export const getProductByIdHandler =
   (productService: ProductServiceInterface) => async (event) => {
     try {
-      console.log(event.pathParameters);
       winstonLogger.logRequest(`Incoming event: ${JSON.stringify(event)}`);
 
       const { productId = "" } = event.pathParameters;
-
-      console.log(productService);
 
       const product = await productService.getProductById(productId);
 
@@ -18,9 +15,13 @@ export const getProductByIdHandler =
         `"Received product with id: ${productId}: ${JSON.stringify(product)}`
       );
 
-      if (product) return successResponse({ product });
+      if (!product)
+        return errorResponse(
+          new Error(`Product with id ${productId} not found`),
+          404
+        );
 
-      return successResponse({ message: "Product not found" }, 404);
+      return successResponse({ product });
     } catch (err) {
       return errorResponse(err);
     }
