@@ -1,0 +1,84 @@
+service: import-service
+frameworkVersion: "3"
+
+package:
+  individually: true
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: eu-west-1
+  profile: default
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    BUCKET: ${env:BUCKET}
+    UPLOADED_FOLDER: ${env:UPLOADED_FOLDER}
+    PARSED_FOLDER: ${env:PARSED_FOLDER}
+    REGION: ${self:provider.region}
+
+useDotenv: true
+plugins:
+  - serverless-webpack
+  - serverless-prune-plugin
+  - serverless-iam-roles-per-function
+custom:
+  webpack:
+    webpackConfig: "webpack.config.js"
+    includeModules: true
+  prune:
+    automatic: true
+    number: 2
+  BUCKET: ${env:BUCKET}
+  UPLOADED_FOLDER: ${env:UPLOADED_FOLDER}
+  PARSED_FOLDER: ${env:PARSED_FOLDER}
+
+functions:
+  importProductsFile:
+    handler: handler.importProductsFile
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - s3:ListBucket
+        Resource:
+          - arn:aws:s3:::${self:custom.BUCKET}/${self:custom.UPLOADED_FOLDER}/*
+      - Effect: "Allow"
+        Action:
+          - s3:PutObject
+          - s3:PutObjectAcl
+        Resource:
+          - arn:aws:s3:::${self:custom.BUCKET}/${self:custom.UPLOADED_FOLDER}/*
+    events:
+      - http:
+          path: import
+          method: get
+          cors: true
+          request:
+            parameters:
+              querystrings:
+                name: true
+
+  importFileParser:
+    handler: handler.importFileParser
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - s3:ListBucket
+        Resource:
+          - arn:aws:s3:::${self:custom.BUCKET}/
+      - Effect: "Allow"
+        Action:
+          - s3:GetObject
+          - s3:CopyObject
+          - s3:DeleteObject
+        Resource:
+          - arn:aws:s3:::${self:custom.BUCKET}/${self:custom.UPLOADED_FOLDER}/*
+          - arn:aws:s3:::${self:custom.BUCKET}/${self:custom.PARSED_FOLDER}/
+    events:
+      - s3:
+          bucket: ${self:custom.BUCKET}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: ${self:custom.UPLOADED_FOLDER}/
+          existing: true
