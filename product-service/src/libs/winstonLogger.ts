@@ -2,8 +2,9 @@ import winston from "winston";
 import { Format } from "logform";
 
 interface LoggerInterface {
-  logRequest: (message: string) => void;
-  logError: (message: string) => void;
+  LOG: (message: string) => void;
+  ERROR: (message: string) => void;
+  WARN: (message: string) => void;
 }
 
 class WinstonLogger implements LoggerInterface {
@@ -29,12 +30,16 @@ class WinstonLogger implements LoggerInterface {
       ],
     });
   }
-  logRequest(message: string) {
+  LOG(message: string) {
     this.logger.info(message);
   }
 
-  logError(message: string) {
+  ERROR(message: string) {
     this.logger.error(message);
+  }
+
+  WARN(message: string) {
+    this.logger.warn(message);
   }
 }
 

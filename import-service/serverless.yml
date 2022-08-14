@@ -60,6 +60,9 @@ functions:
 
   importFileParser:
     handler: handler.importFileParser
+    environment:
+      PRODUCTS_QUEUE_URL:
+        - https://sqs.${env:REGION}.amazonaws.com/${env:AWS_ACCOUNT_ID}/product-service-queue
     iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: "Allow"
@@ -75,6 +78,12 @@ functions:
         Resource:
           - arn:aws:s3:::${self:custom.BUCKET}/${self:custom.UPLOADED_FOLDER}/*
           - arn:aws:s3:::${self:custom.BUCKET}/${self:custom.PARSED_FOLDER}/
+      - Effect: "Allow"
+        Action:
+          - sqs:SendMessage
+        Resource:
+          - Fn::Sub: arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:product-service-queue
+
     events:
       - s3:
           bucket: ${self:custom.BUCKET}

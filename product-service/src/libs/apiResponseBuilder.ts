@@ -13,7 +13,7 @@ const defaultHeaders = {
 };
 
 const errorResponse = (err: Error, statusCode = 500): ResponseInterface => {
-  winstonLogger.logError(`Error: ${err.message}`);
+  winstonLogger.ERROR(`Error: ${err.message}`);
 
   return {
     statusCode,
@@ -30,7 +30,7 @@ const successResponse = (
   body: unknown,
   statusCode = 200
 ): ResponseInterface => {
-  winstonLogger.logRequest(`Lambda successfully invoked and finished`);
+  winstonLogger.ERROR(`Lambda successfully invoked and finished`);
 
   return {
     statusCode,

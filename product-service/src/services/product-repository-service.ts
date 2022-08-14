@@ -1,10 +1,10 @@
-import { Client, QueryConfig } from "pg";
+import { Pool, QueryConfig } from "pg";
 import { ProductsWithCount, ProductWithCount } from "../models/products";
 import { ProductServiceInterface } from "../models/product-service-interface";
 import { TableEnum } from "../libs/table.enums";
 
 class ProductRepositoryService implements ProductServiceInterface {
-  constructor(private dbClient: Client) {}
+  constructor(private dbClient: Pool) {}
 
   async getProductById(id: string): Promise<ProductWithCount> {
     const query: QueryConfig = {
@@ -27,28 +27,29 @@ class ProductRepositoryService implements ProductServiceInterface {
 
   async create(product: ProductWithCount) {
     let res: ProductWithCount;
+    const client = await this.dbClient.connect();
     try {
-      await this.dbClient.query("BEGIN");
+      await client.query("BEGIN");
       const queryProductConfig: QueryConfig = {
         text: `INSERT INTO ${TableEnum.PRODUCTS}(title, description, price) VALUES($1, $2, $3) RETURNING *`,
         values: [product.title, product.description, product.price],
       };
-      const resultProduct = await this.dbClient.query(queryProductConfig);
+      const resultProduct = await client.query(queryProductConfig);
       const queryStockConfig = {
         text: `INSERT INTO ${TableEnum.STOCK}(product_id, count) VALUES ($1, $2) RETURNING *`,
         values: [resultProduct.rows[0].id, product.count],
       };
-      const resultStock = await this.dbClient.query(queryStockConfig);
+      const resultStock = await client.query(queryStockConfig);
       res = {
         ...resultProduct.rows[0],
         count: resultStock.rows[0].count,
       };
-      await this.dbClient.query("COMMIT");
+      await client.query("COMMIT");
     } catch (e) {
-      await this.dbClient.query("ROLLBACK");
+      await client.query("ROLLBACK");
       throw e;
     } finally {
-      await this.dbClient.end();
+      await client.release();
     }
 
     return res;

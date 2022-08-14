@@ -1,6 +1,8 @@
 service: product-service
 frameworkVersion: "3"
 
+package:
+  individually: true
 provider:
   name: aws
   runtime: nodejs14.x
@@ -16,6 +18,34 @@ provider:
     PGDATABASE: ${self:custom.dotenvVars.PGDATABASE, env:PGDATABASE, ''}
     PGPASSWORD: ${self:custom.dotenvVars.PGPASSWORD, env:PGPASSWORD, ''}
     PGPORT: ${self:custom.dotenvVars.PGPORT, env:PGPORT, ''}
+    REGION: ${self:provider.region}
+    TOPIC_ARN: { Ref: SNSTopic }
+
+resources:
+  Resources:
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-queue
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: createProductTopic
+    SNSSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: "ivan_radchenko@epam.com"
+        Protocol: "email"
+        TopicArn:
+          Ref: SNSTopic
+    SNSSubscriptionHaveZeroCount:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: "radchenk@gmail.com"
+        Protocol: "email"
+        TopicArn:
+          Ref: SNSTopic
+        FilterPolicy: { haveZeroCount: [{ numeric: ["=", 1] }] }
 
 plugins:
   - serverless-auto-swagger
@@ -94,3 +124,22 @@ functions:
               description: "Product could not be created"
             500:
               description: "Internal Server Error"
+  catalogBatchProcess:
+    handler: handler.catalogBatchProcess
+    timeout: 10
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - SQSQueue
+              - Arn
+    iamRoleStatements:
+      - Effect: Allow
+        Action: sqs:*
+        Resource:
+          Fn::GetAtt: [SQSQueue, Arn]
+      - Effect: Allow
+        Action: sns:*
+        Resource:
+          Ref: SNSTopic

@@ -3,7 +3,8 @@ import { ProductServiceInterface } from "../../models/product-service-interface"
 import { createProductHandler } from "./createProduct";
 
 describe("createProduct Handler", () => {
-  jest.spyOn(winstonLogger, "logRequest").mockImplementation(jest.fn);
+  jest.spyOn(winstonLogger, "LOG").mockImplementation(jest.fn);
+  jest.spyOn(winstonLogger, "ERROR").mockImplementation(jest.fn);
   const mockRepository: ProductServiceInterface = {
     getProductById: jest.fn(),
     getAllProducts: jest.fn(),
@@ -45,7 +46,7 @@ describe("createProduct Handler", () => {
     });
   });
 
-  it("should return 404 if no product created", async () => {
+  it("should return 400 if no product created", async () => {
     const event = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -56,32 +57,27 @@ describe("createProduct Handler", () => {
       }),
     };
 
-    spyRepository.mockRejectedValue({
-      message: "Product can not have null values",
-      statusCode: 404,
-    });
+    spyRepository.mockRejectedValue({});
 
     const response = await handler(event);
 
-    expect(response.statusCode).toBe(404);
+    expect(response.statusCode).toBe(400);
     expect(JSON.parse(response.body)).toMatchObject({
-      message: "Product can not have null values",
+      message: `Could not create a product with payload ${event.body}`,
     });
   });
 
   it("should return 500 if internal server error", async () => {
     const event = {
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({}),
+      body: {} as any,
     };
-
-    spyRepository.mockRejectedValue({ message: "Internal server error" });
 
     const response = await handler(event);
 
     expect(response.statusCode).toBe(500);
     expect(JSON.parse(response.body)).toMatchObject({
-      message: "Internal server error",
+      message: "Unexpected token o in JSON at position 1",
     });
   });
 });

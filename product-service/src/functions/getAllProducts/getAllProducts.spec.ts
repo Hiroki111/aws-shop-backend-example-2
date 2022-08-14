@@ -3,7 +3,8 @@ import { ProductServiceInterface } from "../../models/product-service-interface"
 import { getAllProductsHandler } from "./getAllProducts";
 
 describe("getAllProducts Handler", () => {
-  jest.spyOn(winstonLogger, "logRequest").mockImplementation(jest.fn);
+  jest.spyOn(winstonLogger, "LOG").mockImplementation(jest.fn);
+  jest.spyOn(winstonLogger, "ERROR").mockImplementation(jest.fn);
   const mockRepository: ProductServiceInterface = {
     getProductById: jest.fn(),
     getAllProducts: jest.fn(),
@@ -47,7 +48,7 @@ describe("getAllProducts Handler", () => {
     ]);
   });
 
-  it("should return 500 if internal server error", async () => {
+  it("should return 404 if rejected value", async () => {
     const event = {
       headers: { "Content-Type": "application/json" },
     };
@@ -56,9 +57,9 @@ describe("getAllProducts Handler", () => {
 
     const response = await handler(event);
 
-    expect(response.statusCode).toBe(500);
+    expect(response.statusCode).toBe(404);
     expect(JSON.parse(response.body)).toMatchObject({
-      message: "Internal server error",
+      message: "Could not get products",
     });
   });
 });

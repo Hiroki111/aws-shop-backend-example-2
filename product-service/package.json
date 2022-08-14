@@ -21,6 +21,7 @@
     "@types/jest": "^28.1.6",
     "@types/node": "^10.17.56",
     "@types/serverless": "^3.12.7",
+    "aws-sdk-client-mock": "^1.0.0",
     "dotenv": "^8.2.0",
     "eslint": "^7.0.0",
     "fork-ts-checker-webpack-plugin": "^7.2.12",
@@ -43,6 +44,7 @@
   "author": "JSCC",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-sns": "^3.145.0",
     "@types/pg": "^8.6.5",
     "pg": "^8.7.3",
     "uuid": "^8.3.2",

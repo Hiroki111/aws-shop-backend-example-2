@@ -3,7 +3,8 @@ import { getProductByIdHandler } from "./getProductById";
 import { winstonLogger } from "../../libs/winstonLogger";
 
 describe("getProductById Handler", () => {
-  jest.spyOn(winstonLogger, "logRequest").mockImplementation(jest.fn);
+  jest.spyOn(winstonLogger, "LOG").mockImplementation(jest.fn);
+  jest.spyOn(winstonLogger, "ERROR").mockImplementation(jest.fn);
   const mockRepository: ProductServiceInterface = {
     getProductById: jest.fn(),
     getAllProducts: jest.fn(),

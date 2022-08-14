@@ -31,7 +31,9 @@ export const importProductsFile = async (
     logger.LOG(`Created signed url: ${signedUrl}`);
 
     return successResponse(signedUrl);
-  } catch (error) {
-    return errorResponse(error);
+  } catch (e) {
+    const error = errorResponse(e);
+    logger.ERROR(error.body);
+    return error;
   }
 };

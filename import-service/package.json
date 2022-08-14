@@ -15,12 +15,12 @@
     "test:watch": "jest --watch --coverage"
   },
   "devDependencies": {
-    "aws-sdk": "^2.1183.0",
     "@aws-sdk/types": "3.127.0",
     "@types/aws-lambda": "^8.10.101",
     "@types/jest": "^28.1.6",
     "@types/node": "^10.17.56",
     "@types/serverless": "^3.12.7",
+    "aws-sdk": "^2.1183.0",
     "fork-ts-checker-webpack-plugin": "^7.2.12",
     "serverless-iam-roles-per-function": "^3.2.0",
     "serverless-prune-plugin": "^2.0.1",
@@ -36,6 +36,7 @@
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.137.0",
+    "@aws-sdk/client-sqs": "^3.145.0",
     "@aws-sdk/s3-request-presigner": "^3.137.0",
     "csv-parser": "^3.0.0",
     "winston": "^3.3.3"

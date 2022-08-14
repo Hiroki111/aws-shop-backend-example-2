@@ -3,8 +3,19 @@ import { errorResponse } from "../../utils/apiResponseBuilder";
 import { winstonLogger as logger } from "../../utils/winstonLogger";
 import { copyObject, deleteObject, getObject } from "../../libs/s3";
 import { S3Event } from "aws-lambda";
+import {
+  SendMessageCommand,
+  SendMessageRequest,
+  SQSClient,
+} from "@aws-sdk/client-sqs";
 
-const { UPLOADED_FOLDER = "", PARSED_FOLDER = "" } = process.env;
+const {
+  REGION = "",
+  UPLOADED_FOLDER = "",
+  PARSED_FOLDER = "",
+  PRODUCTS_QUEUE_URL = "",
+} = process.env;
+const sqs = new SQSClient({ region: REGION });
 
 export const importFileParser = async (event: S3Event) => {
   try {
@@ -20,6 +31,15 @@ export const importFileParser = async (event: S3Event) => {
       const records = await parseCsvStream(csvStream);
       logger.LOG(`Parsed records: ${JSON.stringify(records)}`);
 
+      logger.LOG(`Queue products creation via ${PRODUCTS_QUEUE_URL}`);
+      for (const record of records) {
+        const sqsRequest: SendMessageRequest = {
+          QueueUrl: PRODUCTS_QUEUE_URL,
+          MessageBody: JSON.stringify(record),
+        };
+        await sqs.send(new SendMessageCommand(sqsRequest));
+      }
+
       logger.LOG(`Moving file from '${UPLOADED_FOLDER}' to '${PARSED_FOLDER}'`);
       await copyObject({
         ...input,
@@ -33,5 +53,6 @@ export const importFileParser = async (event: S3Event) => {
   } catch (e) {
     const error = errorResponse(e);
     logger.ERROR(error.body);
+    return error;
   }
 };
