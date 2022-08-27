@@ -16,6 +16,7 @@
   "include": [
     "./**/*.ts",
     "product-service/configs.js",
-    "import-service/configs.js"
+    "import-service/configs.js",
+    "authorization-service/configs.js"
   ]
 }

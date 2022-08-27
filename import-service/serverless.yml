@@ -35,6 +35,8 @@ custom:
 functions:
   importProductsFile:
     handler: handler.importProductsFile
+    environment:
+      AUTHORIZER_LAMBDA_ARN: ${env:AUTHORIZER_LAMBDA_ARN}
     iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: "Allow"
@@ -53,6 +55,12 @@ functions:
           path: import
           method: get
           cors: true
+          authorizer:
+            name: basicAuthorizer
+            arn: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:${env:AUTHORIZER_LAMBDA_ARN}
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: "token"
           request:
             parameters:
               querystrings:
