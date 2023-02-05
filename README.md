@@ -1,7 +1,7 @@
 https://github.com/IvanRadchenko/shop-angular-cloudfront-be/tree/aws-course-task-7
 
 
-
+https://github.com/EPAM-JS-Competency-center/cloud-development-course-initial
 
 # Serverless - EPAM AWS Course - Online Shop BE
 
