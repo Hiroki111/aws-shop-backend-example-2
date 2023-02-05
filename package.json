@@ -1,0 +1,41 @@
+{
+  "name": "shop-nodejs-aws-serverless",
+  "version": "1.0.0",
+  "description": "Backend for E-Commerce application (Shop) created with NodeJS, AWS Cloud and Serverless architecture and Serverless framework",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "husky install",
+    "prettier": "prettier --write '*/**/*.{js,ts}'",
+    "lint:format": "npx --no-install lint-staged && npx --no-install pretty-quick --staged",
+    "start:offline": "serverless offline --httpPort=4000",
+    "docs": "redoc-cli serve docs/openapi/openapi.yml",
+    "docs:watch": "npx @redocly/openapi-cli preview-docs docs/openapi/openapi.yml"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IvanRadchenko/shop-angular-cloudfront-be.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IvanRadchenko/shop-angular-cloudfront-be/issues"
+  },
+  "homepage": "https://github.com/IvanRadchenko/shop-angular-cloudfront-be#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^12.1.4",
+    "@commitlint/config-conventional": "^12.1.4",
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
+    "@typescript-eslint/parser": "^5.30.6",
+    "eslint": "^8.0.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^10.5.4",
+    "prettier": "^2.3.0",
+    "pretty-quick": "^3.1.0",
+    "redoc-cli": "^0.13.2"
+  },
+  "lint-staged": {
+    "*.{ts}": [
+      "eslint --fix"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+service: authorization-service
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: ${env:REGION}
+  stage: dev
+  profile: default
+
+useDotenv: true
+
+package:
+  individually: true
+
+plugins:
+  - serverless-webpack
+  - serverless-prune-plugin
+
+custom:
+  webpack:
+    webpackConfig: "webpack.config.js"
+    includeModules: true
+  prune:
+    automatic: true
+    number: 2
+
+functions:
+  basicAuthorizer:
+    handler: handler.basicAuthorizer
+    environment:
+      ivanradchenko: ${env:PASSWORD}

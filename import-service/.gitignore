@@ -1,0 +1,17 @@
+.idea
+.vscode
+.env
+node_modules
+*/swagger
+swagger
+dist
+*/node_modules
+**/.env
+
+# Serverless directories
+*/.serverless
+
+# Webpack directories
+*/.webpack
+*/import-service/dist
+
