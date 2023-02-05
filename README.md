@@ -1,3 +1,8 @@
+https://github.com/IvanRadchenko/shop-angular-cloudfront-be/tree/aws-course-task-7
+
+
+
+
 # Serverless - EPAM AWS Course - Online Shop BE
 
 ## Installation/deployment instructions
